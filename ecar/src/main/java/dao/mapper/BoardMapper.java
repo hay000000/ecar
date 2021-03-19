@@ -12,7 +12,6 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import logic.Board;
-import logic.Comment;
 
 public interface BoardMapper {
 
@@ -20,22 +19,23 @@ public interface BoardMapper {
 			+ ", date, readcnt, btype, man from board ";
 
 	@Select({"<script>",
-		" select count(*) from board where btype=#{btype} ",
-		"<if test='man != null'>and man=#{man}</if>", 
-		"<if test='searchtype !=null and searchcontent != null'>"
-		+ " where ${searchtype} like '%${searchcontent}%'</if>",
+		" select count(*) from board where btype=#{btype}",
+		"<if test='searchtype !=null and searchcontent != null'> "
+		+ " and ${searchtype} like '%${searchcontent}%'</if> ",
+		"<if test='man != null'> and man = #{man}</if>",
 		" ORDER BY date desc ",
 		"</script>"})
 	int count(Map<String, Object> param);
 
-	@Select({"<script>",select,
-		"<if test='searchtype !=null and searchcontent != null'>"
-		+ " where ${searchtype} like '%${searchcontent}%'",
-		"and btype=#{btype}and man=#{man} </if>",
-		"<if test='cnt != null'>where cnt = #{cnt}</if>",
+	@Select({"<script>",select,		
 		"<if test='btype != null'> where btype = #{btype}</if>",
+		"<if test='searchtype !=null and searchcontent != null'>"
+		+ " and ${searchtype} like '%${searchcontent}%'</if>",
+	//	" and btype=#{btype} and man=#{man} ",
+		"<if test='cnt != null'> where cnt = #{cnt}</if>",
 		"<if test='man != null'> and man = #{man}</if>",
-		" ORDER BY date desc ",
+		"<if test='limit != null'>"
+		+" ORDER BY date desc limit #{startrow}, #{limit}</if>",
 		"</script>"})
 	List<Board> select(Map<String, Object> param);
 
