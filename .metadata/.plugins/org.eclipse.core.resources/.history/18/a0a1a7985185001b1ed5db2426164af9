@@ -1,0 +1,63 @@
+package logic;
+
+import java.util.Date;
+
+public class Comment {
+private Integer comnum;
+private int cnt;
+private String id;
+private String pw;
+private String content;
+private Date up;
+private int btype;
+
+public Integer getComnum() {
+	return comnum;
+}
+public void setComnum(Integer comnum) {
+	this.comnum = comnum;
+}
+public int getCnt() {
+	return cnt;
+}
+public void setCnt(int cnt) {
+	this.cnt = cnt;
+}
+public String getId() {
+	return id;
+}
+public void setId(String id) {
+	this.id = id;
+}
+public String getPw() {
+	return pw;
+}
+public void setPw(String pw) {
+	this.pw = pw;
+}
+public String getContent() {
+	return content;
+}
+public void setContent(String content) {
+	this.content = content;
+}
+public Date getUp() {
+	return up;
+}
+public void setUp(Date up) {
+	this.up = up;
+}
+public int getBtype() {
+	return btype;
+}
+public void setBtype(int btype) {
+	this.btype = btype;
+}
+@Override
+public String toString() {
+	return "Comment [comnum=" + comnum + ", cnt=" + cnt + ", id=" + id + ", pw=" + pw + ", content=" + content + ", up="
+			+ up + ", btype=" + btype + "]";
+}
+
+
+}

@@ -1,0 +1,3 @@
+#Tomcat publish data
+#Thu Mar 18 17:43:07 KST 2021
+org.eclipse.jst.j2ee.server\:/binary\:C\:\\Users\\sa365\\.m2\\repository\\org\\springframework\\spring-web\\5.0.20.RELEASE\\spring-web-5.0.20.RELEASE.jar=WEB-INF/lib/spring-web-5.0.20.RELEASE.jar

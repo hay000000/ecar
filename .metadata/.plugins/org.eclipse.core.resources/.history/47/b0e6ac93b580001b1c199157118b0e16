@@ -1,0 +1,77 @@
+package controller;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import logic.ShopService;
+
+public class AjaxController {
+	@Autowired
+	private ShopService service;
+	
+	/*
+	 * 일본엔화, 중국CNH,유로화 추가하기
+	 * value ="exchange" : 요청 url 설정. /ajax/exchange.shop
+	 * produces = "text/html; charset=UTF-8" : 클라이언트에 데이터로 전송 될때
+	 * 							문서종류,인코딩 방식 설정
+	 */
+	@RequestMapping(value="exchange",produces="text/html;charset=UTF-8")
+	public String exchange() {
+		Document doc = null;
+		List<String> list = new ArrayList<>();
+		List<String> list2 = new ArrayList<>();
+		String url="https://www.koreaexim.go.kr/site/program/financial/exchange?menuid=001001004002001";
+		try {
+			doc = Jsoup.connect(url).get();
+			Elements e1 = doc.select(".tc");
+			Elements e2 = doc.select(".tl2.bdl");
+			for(int i=0;i<e1.size();i++) {
+				if(e1.get(i).html().equals("USD") ||
+				   e1.get(i).html().equals("CNH") ||
+				   e1.get(i).html().equals("JPY(100)") ||
+				   e1.get(i).html().equals("EUR")) {
+					list.add(e1.get(i).html());
+					for(int j=1;j<=6;j++) {
+						list.add(e1.get(i+j).html());
+					}
+				}
+				
+			}	
+			for(Element ele : e2) {
+				if(ele.html().contains("미국")||
+				   ele.html().contains("위안화")||
+				   ele.html().contains("일본")||
+				   ele.html().contains("유로")) {
+						list2.add(ele.html());						
+				}
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+		StringBuilder html = new StringBuilder();
+		html.append("<table class='w3-table-all'>");
+		html.append("<caption>수출입은행:"+today+"</caption>");
+		html.append("<tr><th>나라</th><th>기준율</th><th>받을때</th><th>파실때</th></tr>");
+		for(int i = 0; i <list.size(); i +=7) {
+			html.append("<tr><td style=' board: 1px solid black'>"
+					+ "<font size='1'>" + list2.get(i / 7) + "("
+					+ list.get(i)+ ")</font></td>");
+			html.append("<td>" + list.get(i+3) + "</td>");
+			html.append("<td>" + list.get(i+1) + "</td>");
+			html.append("<td>" + list.get(i+2) + "</td></tr>");
+		}
+		html.append("</table>");
+		return html.toString();
+	}
+}

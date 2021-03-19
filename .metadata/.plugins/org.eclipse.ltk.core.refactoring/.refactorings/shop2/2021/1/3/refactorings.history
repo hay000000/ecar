@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;User.java&apos; to &apos;shop3/src/main/java/logic&apos;&#x0D;&#x0A;- Original project: &apos;shop2&apos;&#x0D;&#x0A;- Destination element: &apos;shop3/src/main/java/logic&apos;&#x0D;&#x0A;- Original element: &apos;logic.User.java&apos;" description="Copy compilation unit" destination="=shop3/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;logic" element1="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;logic{User.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1610499471474" units="1" version="1.0"/>
+</session>

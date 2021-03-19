@@ -1,0 +1,65 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>geolocation으로 마커 표시하기</title>
+    
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+<body>
+<div style="width: 75%">
+<canvas id="canvas"></canvas>
+</div>
+<script type="text/javascript">	
+var randomColorFactor = function(){
+return Math.round(Math.random() * 255);
+}
+var randomColor = function(opacity){
+return "rgba("+randomColorFactor()+","
+	+ randomColorFactor() +","
+	+ randomColorFactor() +","
+	+ (opacity || '.3')+")";
+};
+var chartData={
+labels:[df,df,df,df,],
+datasets: [
+	{ type: 'bar',
+	  borderWidth: 2,
+	  borderColor: randomColor(1),
+	  label: '건수',
+	  file: false,
+	  data: [10,20,39,49]	
+}]
+};
+
+window.onload = function(){
+var ctx = document.getElementById('canvas').getContext('2d');
+new Chart(ctx,{
+type:'bar',
+data: chartData,
+options:{
+	responsive: true,
+	title: {display: true, text:'게시판 등록 건수'},
+	legend:{display : false},
+	scales: {
+		xAxes: [{
+			display : true,
+			scalLabel: {
+				display : true,
+				labelString : "게시물 작성자"},
+				stacked : true}],
+		yAxes: [{
+			display : true,
+			scalLabel: {
+				display : true,
+				labelString : "게시물 작성 건수"},
+				stacked : true}]
+	}
+}
+})
+}
+</script>
+</body>
+</html>

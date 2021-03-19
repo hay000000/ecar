@@ -1,0 +1,37 @@
+package dao.mapper;
+
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import logic.Board;
+import logic.Comment;
+
+public interface CommentMapper {
+	
+	final String select = " select comnum, content, up, pw, cnt, id "
+			+ " from comment ";
+
+	@Insert(" insert into comment (comnum, cnt, id ,pw, content, up)"
+			+ " values (#{comnum}, #{cnt}, #{id}, #{pw}, #{content} ,now())")
+	void write(Comment comment);
+
+	@Select("SELECT ifnull(MAX(comnum),0) FROM comment")
+    int maxcomnum();
+	
+	@Select(select +" where cnt=#{cnt}")
+	Comment detail2(@Param("cnt")int cnt);
+
+	@Select({"<script>",
+		"select count(*) from comment",
+		"<if test='cnt != null and btype != null and man != null'>where cnt=#{cnt} and btype=#{btype} and man=#{man}</if>",
+		"<if test='cnt == null and btype != null'> where btype=#{btype} and man=#{man}</if>",
+		"</script>"})
+	int count(Map<String, Object> param);
+
+
+}

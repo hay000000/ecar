@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy 2 elements to &apos;shop2/src/main/resources&apos;&#x0D;&#x0A;- Original project: &apos;shop1&apos;&#x0D;&#x0A;- Destination element: &apos;shop2/src/main/resources&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     spring-db.xml&#x0D;&#x0A;     spring-mvc.xml" description="Copy files" destination="=shop2/src\/main\/resources=/maven.pomderived=/true=/" element1="src/main/resources/spring-db.xml" element2="src/main/resources/spring-mvc.xml" files="2" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1609996267673" units="0" version="1.0"/>
+</session>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;AjaxController.java&apos; to &apos;ecar/src/main/java/controller&apos;&#x0D;&#x0A;- Original project: &apos;shop5&apos;&#x0D;&#x0A;- Destination element: &apos;ecar/src/main/java/controller&apos;&#x0D;&#x0A;- Original element: &apos;controller.AjaxController.java&apos;" description="Copy compilation unit" destination="=ecar/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;controller" element1="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;controller{AjaxController.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1615351277029" units="1" version="1.0"/>
+</session>

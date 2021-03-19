@@ -1,0 +1,302 @@
+package logic;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+
+import dao.BoardDao;
+
+
+
+@Service	//@Component + Service ���. : Controller�� Dao�� �߰� ���� ����
+public class ShopService {
+	
+	@Autowired
+	private BoardDao boardDao;
+	
+	
+	
+
+	
+
+	//MultipartFile�� �����͸� ���Ϸ� ����
+	private void uploadFileCreate
+		(MultipartFile picture, HttpServletRequest request,String path) {
+		String orgFile = picture.getOriginalFilename();	 //���ε�� ������ �̸�
+		String uploadPath = request.getServletContext().getRealPath("/")+path;
+		File fpath = new File(uploadPath);
+		if(!fpath.exists()) fpath.mkdirs();	//�ɷε� ������ ���� ��� ���� ����
+		try {
+			//picture : ���ε�� ������ ���� ����
+			//transferTo : ���ε�� ������ ������ File�� ����
+			picture.transferTo(new File(uploadPath+orgFile));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+
+
+
+	public int boardcount(String searchtype, String searchcontent) {
+		return boardDao.count(searchtype,searchcontent);
+	}
+	public List<Board> boardlist(Integer pageNum, int limit, String searchtype, String searchcontent) {
+		return boardDao.list(pageNum,limit,searchtype,searchcontent);
+	}
+	public Board detail(int num) {
+		return boardDao.detail(num);
+	}
+	public void readupdate(int num) {
+		 boardDao.readudate(num);
+	}
+	public boolean boardwrite(Board board,HttpServletRequest request) {
+		if(board.getFile1()!=null && !board.getFile1().isEmpty()) {
+			uploadFileCreate(board.getFile1(), request, "img/");
+			board.setFileurl(board.getFile1().getOriginalFilename());
+		}
+		try{
+			boardDao.write(board);
+			return true;
+		}catch(Exception e	) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public int maxnum() {
+		return boardDao.maxnum();
+	}
+
+	
+
+
+	public void boarddelete(int num) {
+		 boardDao.boarddelete(num);
+		
+	}
+
+	public Map<String, Object> graph1() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		for(Map<String, Object> m : boardDao.graph1()) {
+			map.put((String)m.get("name"),m.get("cnt"));
+		}
+		return map;
+	}
+	public Map<String, Object> graph2() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		for(Map<String, Object> m : boardDao.graph2()) {
+			map.put((String)m.get("regdate"),m.get("cnt"));
+		}
+		return map;
+	}
+	
+	
+	public String xml_list(StringBuilder url) {
+		String result = url.toString();
+		
+		try {
+			HttpURLConnection conn
+			 = (HttpURLConnection)new URL(result).openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("Content-type", "application/json");
+			BufferedReader rd;
+	        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+	            rd = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+	        } else {
+	            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "utf-8"));
+	        }
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+	        while ((line = rd.readLine()) != null) {
+	            sb.append(line);
+	        }
+	        rd.close();
+	        conn.disconnect();
+			result = sb.toString();
+			System.out.println(result);
+			
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	//JSON
+	public String json_list(StringBuilder url) {
+		JSONObject json = null; //JSONObject 클래스를 사용하기 위해 메이븐에서 JSON.simple 라이브러리 추가
+		
+		try {
+			json = (JSONObject) new JSONParser().parse( xml_list(url) );
+			json = (JSONObject) json.get("response");
+			json = (JSONObject) json.get("body");
+			int count = json.get("totalCount") == null ? 0 : Integer.parseInt(json.get("totalCount").toString());
+			
+			if (json.get("items") instanceof JSONObject) { //instanceof 타입 비교 키워드
+				json = (JSONObject) json.get("items");
+			}
+			json.put("count", count);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return json.toJSONString();
+	}
+	public List<String> charger(){
+		List<String> list = new ArrayList<String>();
+        try {
+            FileInputStream file = new FileInputStream("C:/Users/sa365/Desktop/python/project/charger.xlsx");
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+ 
+            int rowindex=0;
+            int columnindex=0;
+            //시트 수 (첫번째에만 존재하므로 0을 준다)
+            //만약 각 시트를 읽기위해서는 FOR문을 한번더 돌려준다
+            XSSFSheet sheet=workbook.getSheetAt(0);
+            //행의 수
+            int rows=sheet.getPhysicalNumberOfRows();
+            for(rowindex=1;rowindex<rows;rowindex++){
+                //행을읽는다
+                XSSFRow row=sheet.getRow(rowindex);
+                if(row !=null){
+                    //셀의 수
+                    int cells=row.getPhysicalNumberOfCells();
+                    for(columnindex=0; columnindex<=cells; columnindex++){
+                        //셀값을 읽는다
+                        XSSFCell cell=row.getCell(columnindex);
+                        String value="";
+                        //셀이 빈값일경우를 위한 널체크
+                        if(cell==null){
+                            continue;
+                        }else{
+                            //타입별로 내용 읽기
+                            switch (cell.getCellType()){
+                            case XSSFCell.CELL_TYPE_FORMULA:
+                                value=cell.getCellFormula();
+                                break;
+                            case XSSFCell.CELL_TYPE_NUMERIC:
+                                value=cell.getNumericCellValue()+"";
+                                break;
+                            case XSSFCell.CELL_TYPE_STRING:
+                                value=cell.getStringCellValue()+"";
+                                break;
+                            case XSSFCell.CELL_TYPE_BLANK:
+                                value=cell.getBooleanCellValue()+"";
+                                break;
+                            case XSSFCell.CELL_TYPE_ERROR:
+                                value=cell.getErrorCellValue()+"";
+                                break;
+                            }
+                        }
+                        if(columnindex ==1 ||columnindex ==5||columnindex ==6||columnindex ==7)
+                        	list.add(value);
+                    }
+ 
+                }
+            }
+
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+		return list;
+	}
+	
+	public List<Map<String, String>> ecarlist(){
+		List<String> list = new ArrayList<String>();
+		List<Map<String, String>> listmap = new ArrayList<Map<String,String>>();
+		Map<String, String> map1 = new HashMap<String, String>();
+		Map<String, String> map2 = new HashMap<String, String>();
+		Map<String, String> map3 = new HashMap<String, String>();
+        try {
+            FileInputStream file = new FileInputStream("C:/Users/sa365/Desktop/ecarlist.xlsx");
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
+ 
+            int rowindex=0;
+            int columnindex=0;
+            //시트 수 (첫번째에만 존재하므로 0을 준다)
+            //만약 각 시트를 읽기위해서는 FOR문을 한번더 돌려준다
+            XSSFSheet sheet=workbook.getSheetAt(0);
+            //행의 수
+            int rows=sheet.getPhysicalNumberOfRows();
+            for(rowindex=0;rowindex<rows;rowindex++){
+                //행을읽는다
+                XSSFRow row=sheet.getRow(rowindex);
+                if(row !=null){
+                    //셀의 수
+                    int cells=row.getPhysicalNumberOfCells();
+                    for(columnindex=0; columnindex<=cells; columnindex++){
+                        //셀값을 읽는다
+                        XSSFCell cell=row.getCell(columnindex);
+                        String value="";
+                        //셀이 빈값일경우를 위한 널체크
+                        if(cell==null){
+                            continue;
+                        }else{
+                            //타입별로 내용 읽기
+                            switch (cell.getCellType()){
+                            case XSSFCell.CELL_TYPE_FORMULA:
+                                value=cell.getCellFormula();
+                                break;
+                            case XSSFCell.CELL_TYPE_NUMERIC:
+                                value=cell.getNumericCellValue()+"";
+                                break;
+                            case XSSFCell.CELL_TYPE_STRING:
+                                value=cell.getStringCellValue()+"";
+                                break;
+                            case XSSFCell.CELL_TYPE_BLANK:
+                                value=cell.getBooleanCellValue()+"";
+                                break;
+                            case XSSFCell.CELL_TYPE_ERROR:
+                                value=cell.getErrorCellValue()+"";
+                                break;
+                            }
+                        }
+                        //System.out.println(rowindex+"번 행 : "+columnindex+"번 열 값은: "+value);
+                        if(rowindex==0) {
+                        	list.add(value);
+                        }else if(rowindex==1 ){
+                        	map1.put(list.get(columnindex), value);
+                        	listmap.add(map1);
+                        }else if(rowindex==2) {
+                        	map2.put(list.get(columnindex), value);
+                        	listmap.add(map2);
+                        }else if(rowindex==3){
+                        	map3.put(list.get(columnindex), value);
+                        	listmap.add(map3);
+                        }
+                        
+                    }
+ 
+                }
+            }
+            
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+		return listmap;
+	}
+
+}

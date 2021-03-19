@@ -1,0 +1,23 @@
+p1.txt 파일입니다. javasecurity 프로젝트 폴더에 만드십시요
+
+
+public class CipherUtil {
+	private static byte[] randomKey;
+	private static byte[] iv = new byte[] {
+			(byte) 0x8E, 0x12, 0x39, (byte) 0x9C,
+				   0x07, 0x72, 0x6F, (byte) 0x5A,
+			(byte) 0x8E, 0x12, 0x39, (byte) 0x9C,
+				   0x07, 0x72, 0x6F, (byte) 0x5A };
+	static Cipher cipher;
+	static {
+		try {
+			cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static byte[] getRandomKey(String algo) throws NoSuchAlgorithmException{
+		KeyGenerator keyGen = KeyGenerator.getInstance(algo);
+		keyGen.init(128); //128비트 ~ 196비트 키의크기가 가능.
+		SecretKey key = keyGen.generateKey(); //랜덤키 생성
+		return key.getEncoded();

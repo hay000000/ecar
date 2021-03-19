@@ -1,0 +1,77 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>geolocation으로 마커 표시하기</title>
+    
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+<body>
+<div style="width: 75%">
+<canvas id="canvas"></canvas>
+</div>
+<script type="text/javascript">	
+var randomColorFactor = function(){
+return Math.round(Math.random() * 255);
+}
+var randomColor = function(opacity){
+return "rgba("+randomColorFactor()+","
+	+ randomColorFactor() +","
+	+ randomColorFactor() +","
+	+ (opacity || '.3')+")";
+};
+var chartData={
+		labels: ["09시", "10시", "11시", "12시", "13시", "14시", "15시", "16시", "17시", "18시", "19시", "20시", "21시", "22시"],
+
+		datasets: [
+
+			{
+
+				label: "",
+
+				fillColor: "rgba(150,200,250,0.5)",
+
+				strokeColor: "rgba(150,200,250,0.8)",
+
+				highlightFill: "rgba(150,200,250,0.75)",
+
+				highlightStroke: "rgba(150,200,250,1)",
+
+				data: [65, 59, 80, 81, 56, 55, 30, 100, 120, 50, 11, 40, 70, 120]
+
+			}
+
+		]
+};
+
+window.onload = function(){
+var ctx = document.getElementById('canvas').getContext('2d');
+new Chart(ctx,{
+type:'bar',
+data: chartData,
+options:{
+	responsive: true,
+	title: {display: true, text:'게시판 등록 건수'},
+	legend:{display : false},
+	scales: {
+		xAxes: [{
+			display : true,
+			scalLabel: {
+				display : true,
+				labelString : "게시물 작성자"},
+				stacked : true}],
+		yAxes: [{
+			display : true,
+			scalLabel: {
+				display : true,
+				labelString : "게시물 작성 건수"},
+				stacked : true}]
+	}
+}
+})
+}
+</script>
+</body>
+</html>
